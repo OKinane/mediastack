@@ -1,0 +1,169 @@
+version: "3.7"
+services:
+
+  emby:
+    image: emby/embyserver:4.1.1.0
+    hostname: emby-container
+    ports:
+      - "8096:8096"
+    restart: unless-stopped
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "emby_config:/config"
+      - "medialibrary_emby:${SHARE_CIFS_MOUNT_POINT}:ro"
+    environment:
+      - UID=${CTNUSER_INNER_UID}
+      - GID=${CTNUSER_INNER_GID}
+      - GIDLIST=${CTNUSER_INNER_GID}
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+
+  deluge:
+    image: binhex/arch-deluge:2.0.3-1-02
+    hostname: deluge-container
+    environment:
+      - PUID=${CTNUSER_INNER_UID}
+      - PGID=${CTNUSER_INNER_GID}
+    ports:
+      - "8112:8112"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "deluge_config:/config"
+      - "torrentdownloads:${DOWNLOADS_MOUNT_POINT}"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - FOWNER
+      - DAC_OVERRIDE
+      - SETUID
+      - SETGID
+
+  sonarr:
+    image: linuxserver/sonarr:amd64-latest
+    hostname: sonarr-container
+    depends_on:
+      - "emby"
+      - "deluge"
+      - "jackett"
+    environment:
+      - PUID=${CTNUSER_INNER_UID}
+      - PGID=${CTNUSER_INNER_GID}
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "sonarr_config:/config"
+      - "medialibrary_sonarr:${SHARE_CIFS_MOUNT_POINT}"
+      - "torrentdownloads:${DOWNLOADS_MOUNT_POINT}"
+      - "dummy_volume:/tv:ro"
+    ports:
+      - "8989:8989"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+
+  radarr:
+    image: linuxserver/radarr:amd64-latest
+    hostname: radarr-container
+    depends_on:
+      - "emby"
+      - "deluge"
+      - "jackett"
+    environment:
+      - PUID=${CTNUSER_INNER_UID}
+      - PGID=${CTNUSER_INNER_GID}
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "radarr_config:/config"
+      - "medialibrary_radarr:${SHARE_CIFS_MOUNT_POINT}"
+      - "torrentdownloads:${DOWNLOADS_MOUNT_POINT}"
+      - "dummy_volume:/movies:ro"
+    ports:
+      - "7878:7878"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+
+  bazarr:
+    image: linuxserver/bazarr:amd64-latest
+    hostname: bazarr-container
+    depends_on:
+      - "sonarr"
+      - "radarr"
+    environment:
+      - PUID=${CTNUSER_INNER_UID}
+      - PGID=${CTNUSER_INNER_GID}
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "bazarr_config:/config"
+      - "medialibrary_bazarr:${SHARE_CIFS_MOUNT_POINT}"
+      - "dummy_volume:/tv:ro"
+      - "dummy_volume:/movies:ro"
+    ports:
+      - "6767:6767"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+
+  jackett:
+    image: linuxserver/jackett:amd64-latest
+    hostname: jackett-container
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "jackett_config:/config"
+      - "dummy_volume:/downloads:ro"
+    ports:
+      - "9117:9117"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      
+volumes:
+  dummy_volume:
+  jackett_config:
+  bazarr_config:
+  radarr_config:
+  sonarr_config:
+  deluge_config:
+  emby_config:
+  torrentdownloads:
+  medialibrary_emby:
+    driver_opts:
+      type: "cifs"
+      o: "username=emby,password=${SHARE_CIFS_PASSWORD?Environment variable SHARE_CIFS_PASSWORD is not set},vers=3.0,ro,uid=${CTNUSER_OUTER_UID?Environment variable CTNUSER_OUTER_UID is not set},gid=${CTNUSER_OUTER_GID?Environment variable CTNUSER_OUTER_GID is not set}"
+      device: "${SHARE_CIFS_URI}"
+  medialibrary_sonarr:
+    driver_opts:
+      type: "cifs"
+      o: "username=sonarr,password=${SHARE_CIFS_PASSWORD?Environment variable SHARE_CIFS_PASSWORD is not set},vers=3.0,uid=${CTNUSER_OUTER_UID?Environment variable CTNUSER_OUTER_UID is not set},gid=${CTNUSER_OUTER_GID?Environment variable CTNUSER_OUTER_GID is not set}"
+      device: "${SHARE_CIFS_URI}"
+  medialibrary_radarr:
+    driver_opts:
+      type: "cifs"
+      o: "username=radarr,password=${SHARE_CIFS_PASSWORD?Environment variable SHARE_CIFS_PASSWORD is not set},vers=3.0,uid=${CTNUSER_OUTER_UID?Environment variable CTNUSER_OUTER_UID is not set},gid=${CTNUSER_OUTER_GID?Environment variable CTNUSER_OUTER_GID is not set}"
+      device: "${SHARE_CIFS_URI}"
+  medialibrary_bazarr:
+    driver_opts:
+      type: "cifs"
+      o: "username=bazarr,password=${SHARE_CIFS_PASSWORD?Environment variable SHARE_CIFS_PASSWORD is not set},vers=3.0,uid=${CTNUSER_OUTER_UID?Environment variable CTNUSER_OUTER_UID is not set},gid=${CTNUSER_OUTER_GID?Environment variable CTNUSER_OUTER_GID is not set}"
+      device: "${SHARE_CIFS_URI}"

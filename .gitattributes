@@ -1,0 +1,8 @@
+* text=auto
+
+.gitignore text export-ignore
+.gitattributes text export-ignore
+*.md text
+
+*.yml text
+.env.template text
