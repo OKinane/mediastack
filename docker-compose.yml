@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   emby:
-    image: emby/embyserver:4.6.0.30
+    image: emby/embyserver:4.6.2.0
     hostname: emby-container
     ports:
       - "8096:8096"
@@ -46,7 +46,7 @@ services:
       - SETGID
 
   sonarr:
-    image: linuxserver/sonarr:amd64-preview
+    image: linuxserver/sonarr:latest
     hostname: sonarr-container
     depends_on:
       - "emby"
