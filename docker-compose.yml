@@ -33,6 +33,7 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "deluge_config:/config"
+      - "medialibrary_deluge:${SHARE_CIFS_MOUNT_POINT}"
       - "torrentdownloads:${DOWNLOADS_MOUNT_POINT}"
     restart: unless-stopped
     cap_drop:
@@ -166,4 +167,9 @@ volumes:
     driver_opts:
       type: "cifs"
       o: "username=bazarr,password=${SHARE_CIFS_PASSWORD?Environment variable SHARE_CIFS_PASSWORD is not set},vers=3.0,uid=${CTNUSER_OUTER_UID?Environment variable CTNUSER_OUTER_UID is not set},gid=${CTNUSER_OUTER_GID?Environment variable CTNUSER_OUTER_GID is not set}"
+      device: "${SHARE_CIFS_URI}"
+  medialibrary_deluge:
+    driver_opts:
+      type: "cifs"
+      o: "username=deluge,password=${SHARE_CIFS_PASSWORD?Environment variable SHARE_CIFS_PASSWORD is not set},vers=3.0,uid=${CTNUSER_OUTER_UID?Environment variable CTNUSER_OUTER_UID is not set},gid=${CTNUSER_OUTER_GID?Environment variable CTNUSER_OUTER_GID is not set}"
       device: "${SHARE_CIFS_URI}"
