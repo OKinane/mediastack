@@ -138,9 +138,26 @@ services:
       - CHOWN
       - SETUID
       - SETGID
+
+  prowlarr:
+    image: ghcr.io/linuxserver/prowlarr:amd64-develop
+    hostname: prowlarr-container
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "prowlarr_config:/config"
+    ports:
+      - "9696:9696"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
       
 volumes:
   dummy_volume:
+  prowlarr_config:
   jackett_config:
   bazarr_config:
   radarr_config:
