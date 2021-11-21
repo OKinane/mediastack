@@ -160,7 +160,7 @@ services:
     hostname: filebrowser-container
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-      - "configs/filebrowser/.filebrowser.json:/.filebrowser.json"
+      - "./configs/filebrowser/.filebrowser.json:/.filebrowser.json"
       - "filebrowser_config:/db"
       - "medialibrary_filebrowser:/srv/medialibrary"
       - "torrentdownloads:/srv/torrentdownloads"
