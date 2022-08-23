@@ -138,44 +138,9 @@ services:
       - CHOWN
       - SETUID
       - SETGID
-
-  prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:amd64-develop
-    hostname: prowlarr-container
-    volumes:
-      - "/etc/localtime:/etc/localtime:ro"
-      - "prowlarr_config:/config"
-    ports:
-      - "9696:9696"
-    restart: unless-stopped
-    cap_drop:
-      - ALL
-    cap_add:
-      - CHOWN
-      - SETUID
-      - SETGID
-
-  filebrowser:
-    image: filebrowser/filebrowser
-    hostname: filebrowser-container
-    volumes:
-      - "/etc/localtime:/etc/localtime:ro"
-      - "./configs/filebrowser/.filebrowser.json:/.filebrowser.json"
-      - "filebrowser_config:/db"
-      - "medialibrary_filebrowser:/srv/medialibrary"
-      - "torrentdownloads:/srv/torrentdownloads"
-    ports:
-      - "8008:80"
-    restart: unless-stopped
-    cap_drop:
-      - ALL
-    user: "${CTNUSER_INNER_UID}:${CTNUSER_INNER_GID}"
-
       
 volumes:
   dummy_volume:
-  filebrowser_config:
-  prowlarr_config:
   jackett_config:
   bazarr_config:
   radarr_config:
@@ -207,9 +172,4 @@ volumes:
     driver_opts:
       type: "cifs"
       o: "username=deluge,password=${SHARE_CIFS_PASSWORD?Environment variable SHARE_CIFS_PASSWORD is not set},vers=3.0,uid=${CTNUSER_OUTER_UID?Environment variable CTNUSER_OUTER_UID is not set},gid=${CTNUSER_OUTER_GID?Environment variable CTNUSER_OUTER_GID is not set}"
-      device: "${SHARE_CIFS_URI}"
-  medialibrary_filebrowser:
-    driver_opts:
-      type: "cifs"
-      o: "username=filebrowser,password=${SHARE_CIFS_PASSWORD?Environment variable SHARE_CIFS_PASSWORD is not set},vers=3.0,uid=${CTNUSER_OUTER_UID?Environment variable CTNUSER_OUTER_UID is not set},gid=${CTNUSER_OUTER_GID?Environment variable CTNUSER_OUTER_GID is not set}"
       device: "${SHARE_CIFS_URI}"
