@@ -22,6 +22,24 @@ services:
       - SETUID
       - SETGID
 
+  jellyfin:
+    image: jellyfin/jellyfin
+    hostname: jellyfin-container
+    ports:
+      - "8196:8096"
+    user: ${CTNUSER_INNER_UID}:${CTNUSER_INNER_GID}
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "jellyfin_config:/config"
+      - "medialibrary_jellyfin:${SHARE_CIFS_MOUNT_POINT}:ro"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+
   deluge:
     image: binhex/arch-deluge:2.0.3-1-02
     hostname: deluge-container
@@ -147,11 +165,17 @@ volumes:
   sonarr_config:
   deluge_config:
   emby_config:
+  jellyfin_config:
   torrentdownloads:
   medialibrary_emby:
     driver_opts:
       type: "cifs"
       o: "username=emby,password=${SHARE_CIFS_PASSWORD?Environment variable SHARE_CIFS_PASSWORD is not set},vers=3.0,ro,uid=${CTNUSER_OUTER_UID?Environment variable CTNUSER_OUTER_UID is not set},gid=${CTNUSER_OUTER_GID?Environment variable CTNUSER_OUTER_GID is not set}"
+      device: "${SHARE_CIFS_URI}"
+  medialibrary_jellyfin:
+    driver_opts:
+      type: "cifs"
+      o: "username=jellyfin,password=${SHARE_CIFS_PASSWORD?Environment variable SHARE_CIFS_PASSWORD is not set},vers=3.0,ro,uid=${CTNUSER_OUTER_UID?Environment variable CTNUSER_OUTER_UID is not set},gid=${CTNUSER_OUTER_GID?Environment variable CTNUSER_OUTER_GID is not set}"
       device: "${SHARE_CIFS_URI}"
   medialibrary_sonarr:
     driver_opts:
