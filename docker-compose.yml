@@ -22,23 +22,23 @@ services:
       - SETUID
       - SETGID
 
-  jellyfin:
-    image: jellyfin/jellyfin
-    hostname: jellyfin-container
-    ports:
-      - "8196:8096"
-    user: ${CTNUSER_INNER_UID}:${CTNUSER_INNER_GID}
-    volumes:
-      - "/etc/localtime:/etc/localtime:ro"
-      - "jellyfin_config:/config"
-      - "medialibrary_jellyfin:${SHARE_CIFS_MOUNT_POINT}:ro"
-    restart: unless-stopped
-    cap_drop:
-      - ALL
-    cap_add:
-      - CHOWN
-      - SETUID
-      - SETGID
+#  jellyfin:
+#    image: jellyfin/jellyfin
+#    hostname: jellyfin-container
+#    ports:
+#      - "8196:8096"
+#    user: ${CTNUSER_INNER_UID}:${CTNUSER_INNER_GID}
+#    volumes:
+#      - "/etc/localtime:/etc/localtime:ro"
+#      - "jellyfin_config:/config"
+#      - "medialibrary_jellyfin:${SHARE_CIFS_MOUNT_POINT}:ro"
+#    restart: unless-stopped
+#    cap_drop:
+#      - ALL
+#    cap_add:
+#      - CHOWN
+#      - SETUID
+#      - SETGID
 
   deluge:
     image: binhex/arch-deluge:2.0.3-1-02
