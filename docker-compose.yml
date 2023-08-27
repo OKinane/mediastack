@@ -64,7 +64,7 @@ services:
       - SETGID
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr@sha256:da936c429bf5399a32bf2418ef328c05a02cfb8beccba8fec4bfd51ff9060cd4
     hostname: sonarr-container
     depends_on:
       - "emby"
