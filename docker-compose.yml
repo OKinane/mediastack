@@ -160,6 +160,8 @@ services:
   flaresolverr:
     # DockerHub mirror flaresolverr/flaresolverr:latest
     image: ghcr.io/flaresolverr/flaresolverr:latest
+    security_opt:
+      - seccomp=unconfined
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_FILE=${LOG_FILE:-none}
