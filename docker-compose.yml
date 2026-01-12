@@ -156,6 +156,20 @@ services:
       - CHOWN
       - SETUID
       - SETGID
+
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FILE=${LOG_FILE:-none}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+    ports:
+      - "${PORT:-8191}:8191"
+    volumes:
+      - flaresolver_config:/config
+    restart: unless-stopped
       
 volumes:
   dummy_volume:
@@ -165,6 +179,7 @@ volumes:
   sonarr_config:
   deluge_config:
   emby_config:
+  flaresolver_config:
   jellyfin_config:
   torrentdownloads:
   medialibrary_emby:
