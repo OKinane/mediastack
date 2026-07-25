@@ -179,6 +179,7 @@ services:
       environment:
         - PUID=${CTNUSER_INNER_UID}
         - PGID=${CTNUSER_INNER_GID}
+        - HOME=/config
       ports:
         - "8080:80"
       volumes:
