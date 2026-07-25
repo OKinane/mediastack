@@ -173,29 +173,29 @@ services:
       - flaresolver_config:/config
     restart: unless-stopped
 
-    filebrowser:
-        image: filebrowser/filebrowser:s6
-        hostname: filebrowser-container
-        environment:
-          - PUID=${CTNUSER_INNER_UID}
-          - PGID=${CTNUSER_INNER_GID}
-        ports:
-          - "8080:80"
-        volumes:
-          - "/etc/localtime:/etc/localtime:ro"
-          - "filebrowser_config:/config"
-          - "filebrowser_db:/database"
-          - "medialibrary_deluge:/srv/medialibrary"
-          - "torrentdownloads:/srv/downloads"
-        restart: unless-stopped
-        cap_drop:
-          - ALL
-        cap_add:
-          - CHOWN
-          - FOWNER
-          - DAC_OVERRIDE
-          - SETUID
-          - SETGID
+  filebrowser:
+      image: filebrowser/filebrowser:s6
+      hostname: filebrowser-container
+      environment:
+        - PUID=${CTNUSER_INNER_UID}
+        - PGID=${CTNUSER_INNER_GID}
+      ports:
+        - "8080:80"
+      volumes:
+        - "/etc/localtime:/etc/localtime:ro"
+        - "filebrowser_config:/config"
+        - "filebrowser_db:/database"
+        - "medialibrary_deluge:/srv/medialibrary"
+        - "torrentdownloads:/srv/downloads"
+      restart: unless-stopped
+      cap_drop:
+        - ALL
+      cap_add:
+        - CHOWN
+        - FOWNER
+        - DAC_OVERRIDE
+        - SETUID
+        - SETGID
       
 volumes:
   dummy_volume:
